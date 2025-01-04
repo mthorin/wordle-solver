@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+.python-version
 .Python
 build/
 develop-eggs/
@@ -169,3 +170,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+words_wordle.txt
