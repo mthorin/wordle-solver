@@ -172,3 +172,4 @@ cython_debug/
 .pypirc
 
 words_wordle.txt
+test.py
