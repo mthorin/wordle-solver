@@ -24,16 +24,16 @@ def get_input(in_string):
 
 def update_correct(words, letters):
     print("")
-    print(f"Correct letters previously confirmed:            {letters[0] if letters[0] else "_"}{letters[1] if letters[1] else "_"}{letters[2] if letters[2] else "_"}{letters[3] if letters[3] else "_"}{letters[4] if letters[4] else "_"}")
-    new = get_input("Enter new correct letters (use _ if no change) : ")
+    print(f"Correct letters previously confirmed: {letters[0] if letters[0] else "_"}{letters[1] if letters[1] else "_"}{letters[2] if letters[2] else "_"}{letters[3] if letters[3] else "_"}{letters[4] if letters[4] else "_"}")
+    new = get_input("Enter new correct letters (use _ if no change): ")
     
-    for i in range (5):
+    for i in range(5):
         letter = new[i].lower()
         if letter.isalpha() and not letters[i]:
             letters[i] = letter
             check_and_remove(words, lambda word: word[i] != letter)
 
-    print(words)
+    # print(words)
 
 
 def update_incorrect(words, letters):
@@ -48,26 +48,45 @@ def update_incorrect(words, letters):
                 letters.append(letter)
                 check_and_remove(words, lambda word: letter in word)
 
-    print(words)
+    # print(words)
 
 def update_yellow(words, letters):
-    pass
+    print("")
+    print("Incorrect letters previously confirmed:")
+    for i in range(len(letters)):
+        print(f"{letters[i][0] if letters[i][0] else "_"}{letters[i][1] if letters[i][1] else "_"}{letters[i][2] if letters[i][2] else "_"}{letters[i][3] if letters[i][3] else "_"}{letters[i][4] if letters[i][4] else "_"}")
+    new = get_input("Enter yellow letters (use _ if not yellow): ")
+    
+    input_list = []
 
-def generate_best_word(words, correct, incorrect, yellow):
+    for i in range(5):
+        letter = new[i].lower()
+        if letter.isalpha():
+            input_list.append(letter)
+            check_and_remove(words, lambda word: letter not in word or word[i] == letter)
+        else:
+            input_list.append(None)
+
+    letters.append(input_list)
+
+    # print(words)
+
+def generate_best_word(all_words, possible_words, correct, incorrect, yellow):
     pass
 
 def main():
     possible_words = load_words()
+    all_words = possible_words.copy()
 
     correct_letters = [None, None, None, None, None]
     incorrect_letters = []
-    yellow_letters = [[],[],[],[],[]]
+    yellow_letters = []
 
     while None in correct_letters:
         update_correct(possible_words, correct_letters)
         update_yellow(possible_words, yellow_letters)
         update_incorrect(possible_words, incorrect_letters)
-        generate_best_word(possible_words, correct_letters, incorrect_letters, yellow_letters)
+        generate_best_word(all_words, possible_words, correct_letters, incorrect_letters, yellow_letters)
 
 if __name__ == '__main__':
     main()
