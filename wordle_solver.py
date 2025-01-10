@@ -1,7 +1,13 @@
 from string import ascii_lowercase
+import sys
 
 def load_words():
-    with open('words_wordle.txt') as word_file:
+    path = "words_wordle.txt"
+
+    if len(sys.argv) > 1:
+        path = sys.argv[1]
+
+    with open(path) as word_file:
         valid_words = set(word_file.read().split())
 
     return valid_words
