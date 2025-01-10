@@ -1,3 +1,5 @@
+from string import ascii_lowercase
+
 def load_words():
     with open('words_wordle.txt') as word_file:
         valid_words = set(word_file.read().split())
@@ -29,11 +31,11 @@ def update_correct(words, letters):
     
     for i in range(5):
         letter = new[i].lower()
-        if letter.isalpha() and not letters[i]:
+        if letter in ascii_lowercase and not letters[i]:
             letters[i] = letter
             check_and_remove(words, lambda word: word[i] != letter)
 
-    # print(words)
+    print(words)
 
 
 def update_incorrect(words, letters):
@@ -43,12 +45,12 @@ def update_incorrect(words, letters):
     
     for char in new:
         letter = char.lower()
-        if letter.isalpha():
+        if letter in ascii_lowercase:
             if letter not in letters:
                 letters.append(letter)
                 check_and_remove(words, lambda word: letter in word)
 
-    # print(words)
+    print(words)
 
 def update_yellow(words, letters):
     print("")
@@ -61,7 +63,7 @@ def update_yellow(words, letters):
 
     for i in range(5):
         letter = new[i].lower()
-        if letter.isalpha():
+        if letter in ascii_lowercase:
             input_list.append(letter)
             check_and_remove(words, lambda word: letter not in word or word[i] == letter)
         else:
@@ -69,10 +71,46 @@ def update_yellow(words, letters):
 
     letters.append(input_list)
 
-    # print(words)
+    print(words)
 
-def generate_best_word(all_words, possible_words, correct, incorrect, yellow):
-    pass
+def generate_best_word(all_words, possible_words, correct_letters):
+    if len(possible_words) < 3:
+        print("")
+        print(f"Suggested word to guess is {next(iter(possible_words))}")
+        return
+
+    letter_values = [dict(), dict(), dict(), dict(), dict()]
+
+    for char in ascii_lowercase:
+        letter_values[0][char] = 0
+        letter_values[1][char] = 0
+        letter_values[2][char] = 0
+        letter_values[3][char] = 0
+        letter_values[4][char] = 0
+
+    for word in possible_words:
+        for i in range(5):
+            if word[i] in letter_values[i]:
+                letter_values[i][word[i]] += 1
+
+    for i in range(5):
+        if correct_letters[i]:
+            letter_values[i][correct_letters[i]] = 0
+
+    best_word = None
+    best_value = 0
+
+    for word in all_words:
+        value = 0
+        for i in range(5):
+            value += letter_values[i][word[i]]
+        
+        if value > best_value:
+            best_value = value
+            best_word = word
+
+    print("")
+    print(f"Suggested word to guess is {best_word}")
 
 def main():
     possible_words = load_words()
@@ -82,11 +120,14 @@ def main():
     incorrect_letters = []
     yellow_letters = []
 
+    generate_best_word(all_words, possible_words, correct_letters)
+    update_correct(possible_words, correct_letters)
+
     while None in correct_letters:
-        update_correct(possible_words, correct_letters)
         update_yellow(possible_words, yellow_letters)
         update_incorrect(possible_words, incorrect_letters)
-        generate_best_word(all_words, possible_words, correct_letters, incorrect_letters, yellow_letters)
+        generate_best_word(all_words, possible_words, correct_letters)
+        update_correct(possible_words, correct_letters)
 
 if __name__ == '__main__':
     main()
