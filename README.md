@@ -2,12 +2,12 @@
 
 **`wordle_solver.py`** is a Python script to help solve Wordle by filtering possible words based on feedback (green, yellow, and gray letters).
 
-In order to work, a word list must be provided with the name **`words_wordle.txt`**
+In order to run, a word list text file must be provided as a command line argument.
 
 ## Usage
 1. Run the script:  
    ```bash
-   python wordle_solver.py
+   python wordle_solver.py words.txt
    ```
 
 2. Enter the suggested word into Wordle.
