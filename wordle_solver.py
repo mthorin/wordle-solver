@@ -44,7 +44,7 @@ def update_correct(words, letters):
     print(words)
 
 
-def update_incorrect(words, letters):
+def update_incorrect(words, letters, correct, yellow):
     print("")
     print(f"Incorrect letters previously confirmed: {letters}")
     new = input("Enter incorrect letters: ")
@@ -54,7 +54,8 @@ def update_incorrect(words, letters):
         if letter in ascii_lowercase:
             if letter not in letters:
                 letters.append(letter)
-                check_and_remove(words, lambda word: letter in word)
+                count = yellow.count(letter) + correct.count(letter)
+                check_and_remove(words, lambda word: word.count(letter) > count)
 
     print(words)
 
@@ -131,7 +132,7 @@ def main():
 
     while None in correct_letters:
         update_yellow(possible_words, yellow_letters)
-        update_incorrect(possible_words, incorrect_letters)
+        update_incorrect(possible_words, incorrect_letters, correct_letters, yellow_letters[-1])
         generate_best_word(all_words, possible_words, correct_letters)
         update_correct(possible_words, correct_letters)
 
