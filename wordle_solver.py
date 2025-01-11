@@ -41,7 +41,7 @@ def update_correct(words, letters):
             letters[i] = letter
             check_and_remove(words, lambda word: word[i] != letter)
 
-    print(words)
+    # print(words)
 
 
 def update_incorrect(words, letters, correct, yellow):
@@ -57,7 +57,7 @@ def update_incorrect(words, letters, correct, yellow):
                 count = yellow.count(letter) + correct.count(letter)
                 check_and_remove(words, lambda word: word.count(letter) > count)
 
-    print(words)
+    # print(words)
 
 def update_yellow(words, letters):
     print("")
@@ -78,7 +78,7 @@ def update_yellow(words, letters):
 
     letters.append(input_list)
 
-    print(words)
+    # print(words)
 
 def generate_best_word(all_words, possible_words, correct_letters):
     if len(possible_words) < 3:
@@ -95,25 +95,47 @@ def generate_best_word(all_words, possible_words, correct_letters):
         letter_values[3][char] = 0
         letter_values[4][char] = 0
 
+    # Calculate value of each letter
     for word in possible_words:
         for i in range(5):
             if word[i] in letter_values[i]:
                 letter_values[i][word[i]] += 1
-
+    
+    # Confirmed letter weight set to 0
     for i in range(5):
         if correct_letters[i]:
             letter_values[i][correct_letters[i]] = 0
 
+    weighted_values = [dict(), dict(), dict(), dict(), dict()]
+
+    # Calculate weighted value for each letter
+    for i in range(5):
+        for char in ascii_lowercase:
+            weighted_values[i][char] = (letter_values[0][char] + letter_values[1][char] + letter_values[2][char] + letter_values[3][char] + letter_values[4][char] - letter_values[i][char]) / 5
+
+    # Confirmed letter weight set to 0
+    for i in range(5):
+        if correct_letters[i]:
+            weighted_values[i][correct_letters[i]] = 0
+
     best_word = None
     best_value = 0
 
+    # Caluclate value for every word and save the best word
     for word in all_words:
-        value = 0
+        values = []
+        letters = []
         for i in range(5):
-            value += letter_values[i][word[i]]
+            if word[i] in letters:
+                index = letters.index(word[i])
+                if values[index] < weighted_values[i][word[i]]:
+                    values[index] = weighted_values[i][word[i]]
+            else:
+                values.append(weighted_values[i][word[i]])
+                letters.append(word[i])
         
-        if value > best_value:
-            best_value = value
+        if sum(values) > best_value:
+            best_value = sum(values)
             best_word = word
 
     print("")
